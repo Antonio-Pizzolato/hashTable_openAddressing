@@ -3,6 +3,7 @@
 
 # NOTA: forse conviene spostare tutte le funzioni insert, ecc. in HashTable (dato che sono comuni a tutte le funzioni hash open addressing)
 import array as arr
+import time
 
 elements = [int(item) for item in input("Enter the elements which are going to be inserted in the hash table: ").split()]
 print(elements)
@@ -49,7 +50,7 @@ class HashTable(object):
                 i = i + 1
             if i == HashTable.default_size:
                 print("Error: Hash Table Overflow")
-                break
+                return
 
     def search(T, value):
         i = 0
@@ -60,7 +61,7 @@ class HashTable(object):
             i = i + 1
             if HashTable.table[k] == HashTable.empty_cell or i == HashTable.default_size:  # con una deleted_cell la ricerca deve continuare
                 print('ERROR: value not found')
-                break
+                return
 
     def delete(T, value):
         i = 0
@@ -70,14 +71,20 @@ class HashTable(object):
                 return
             if HashTable.table[k] == value:
                 HashTable.table[k] = HashTable.deleted_cell
+                return
             i = i + 1
 
 
 T = HashTable()
 elements = arr.array('i', elements)
+print(elements)
 
+start = time.time()
 for element in elements:
     HashTable.insert(T, element)
+end = time.time()
+print("%10.10f" % (end-start))
+
 print(T.table)
 
 a = HashTable.search(T, 2)
