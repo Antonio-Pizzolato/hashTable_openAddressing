@@ -12,11 +12,11 @@ elements_number = len(elements)
 print('Number of elements: ', elements_number)
 
 
-# linear hash function
+# linear hash function (non solo con coefficiente 1)
 def linearHash(x, i):
     h1 = (x - (round(x / elements_number,
                      0) * elements_number))  # la funzione round(a, b) arrotonda il numero a con k cifre decimale ad un numero a con b cifre decimali (in questo caso approssimazione intera per difetto)
-    x = (h1 + i) - (round((h1 + i) / elements_number, 0) * elements_number)
+    x = (h1 + (1 * i)) - (round((h1 + (1 * i)) / elements_number, 0) * elements_number)
     return x
 
 
@@ -24,7 +24,7 @@ def linearHash(x, i):
 def quadraticHash(x, i):
     h1 = (x - (round(x / elements_number, 0) * elements_number))
     x = (h1 + ((1 / 2) * i) + ((1 / 2) * pow(i, 2))) - (
-                round((h1 + ((1 / 2) * i) + ((1 / 2) * pow(i, 2))) / elements_number, 0) * elements_number)
+            round((h1 + ((1 / 2) * i) + ((1 / 2) * pow(i, 2))) / elements_number, 0) * elements_number)
     return x
 
 
@@ -34,6 +34,16 @@ def doubleHash(x, i):
     h2 = 1 + (x - (round(x / (elements_number - 1), 0) * (elements_number - 1)))
     x = ((h1 + (i * h2)) - (round((h1 + (i * h2)) / elements_number, 0) * elements_number))
     return x
+
+
+function = int(
+    input('Choose what function to use (insert the number): \n1. linear hash \n2. quadratic hash \n3. double hash\n'))
+if function == 1:
+    HashFunction = linearHash
+elif function == 2:
+    HashFunction = quadraticHash
+elif function == 3:
+    HashFunction = doubleHash
 
 
 class HashTable(object):
@@ -47,7 +57,7 @@ class HashTable(object):
     def insert(T, value):
         i = 0
         while True:
-            k = int(linearHash(value, i))
+            k = int(HashFunction(value, i))
             if HashTable.table[k] == HashTable.empty_cell or HashTable.deleted_cell:
                 HashTable.table[k] = value
                 return k
@@ -60,7 +70,7 @@ class HashTable(object):
     def search(T, value):
         i = 0
         while True:
-            k = int(linearHash(value, i))
+            k = int(HashFunction(value, i))
             if HashTable.table[k] == value:
                 return k
             i = i + 1
@@ -71,7 +81,7 @@ class HashTable(object):
     def delete(T, value):
         i = 0
         while i < HashTable.default_size:
-            k = int(linearHash(value, i))
+            k = int(HashFunction(value, i))
             if HashTable.table[k] == HashTable.empty_cell or HashTable.table[k] == HashTable.deleted_cell:
                 return
             if HashTable.table[k] == value:
@@ -82,18 +92,23 @@ class HashTable(object):
 
 T = HashTable()
 elements = arr.array('i', elements)
-print(elements)
 
-start = time.time()
+start = time.perf_counter()
 for element in elements:
     HashTable.insert(T, element)
-end = time.time()
-print("%10.10f" % (end - start))
+end = time.perf_counter()
 
-print(T.table)
+print('\n', 'Hash Table: ', T.table)
+print('Time in seconds to insert elements into the Hash Table: '"%10.10f" % (end - start), '\n')
 
+start = time.perf_counter()
 a = HashTable.search(T, 2)
-print(a)
+end = time.perf_counter()
+print('Index of the searched element: ', a)
+print('Time in seconds to look for the element into the Hash Table: '"%10.10f" % (end - start), '\n')
 
+start = time.perf_counter()
 HashTable.delete(T, 2)
-print(T.table)
+end = time.perf_counter()
+print('Hash Table with deleted element: ', T.table)
+print('Time in seconds to delete the element into the Hash Table: '"%10.10f" % (end - start))
