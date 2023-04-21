@@ -54,7 +54,6 @@ elif function == 3:
 
 class HashTable(object):
     default_size = int(input('Type the default size of the hash table: '))
-    # table = [default_size]
     empty_cell = None
     deleted_cell = None
     table = [empty_cell] * default_size
@@ -64,9 +63,6 @@ class HashTable(object):
         i = 0
         while True:
             k = int(HashFunction(value, i))
-            # if k >= elements_number:
-            #     print("Error")
-            #     return
             if HashTable.table[k] == HashTable.empty_cell or HashTable.deleted_cell:
                 HashTable.table[k] = value
                 return k
