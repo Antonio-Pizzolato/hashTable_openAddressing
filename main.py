@@ -117,7 +117,7 @@ end = time.perf_counter()
 print('Index of the searched element: ', a)
 print('Time in seconds to look for the element into the Hash Table: '"%10.10f" % (end - start), '\n')
 
-deleted = int(input("Insert the value you are looking for in the hash table: "))
+deleted = int(input("Insert the value you want to delete in the hash table: "))
 start = time.perf_counter()
 HashTable.delete(T, deleted)
 end = time.perf_counter()
