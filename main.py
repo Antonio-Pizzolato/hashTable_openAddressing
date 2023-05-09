@@ -1,10 +1,7 @@
-# Press Maiusc+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
 import array as arr
-import random
 import time
 import numpy as np
+import matplotlib.pyplot as plt
 
 # elements = [int(item) for item in
 #             input("Enter the elements which are going to be inserted in the hash table: ").split()]
@@ -17,6 +14,7 @@ import numpy as np
 elements_number = int(input("Enter the length of the array that will be randomly created: "))
 elements = np.random.randint(0, 9999, elements_number)
 print(elements)
+
 
 # linear hash function (non solo con coefficiente 1)
 def linearHash(x, i):
@@ -74,48 +72,101 @@ class HashTable(object):
 
     def search(T, value):
         i = 0
+        start_s = time.perf_counter()
+        time_array_search = [0.0] * T.default_size
+        n_s = 0
         while True:
             k = int(HashFunction(value, i))
             if HashTable.table[k] == value:
-                return k
+                end_s = time.perf_counter()
+                time_array_search[n_s] = round(time_array_search[n_s - 1] + ((end_s - start_s) * 1000), 4)
+                return k, time_array_search
             i = i + 1
-            if HashTable.table[k] == HashTable.empty_cell or i == HashTable.default_size:  # con una deleted_cell la ricerca deve continuare
+            if HashTable.table[
+                k] == HashTable.empty_cell or i == HashTable.default_size:  # con una deleted_cell la ricerca deve continuare
                 print('ERROR: value not found')
-                return
+                end_s = time.perf_counter()
+                time_array_search[n_s] = round(time_array_search[n_s - 1] + ((end_s - start_s) * 1000), 4)
+                return time_array_search
+            end_s = time.perf_counter()
+            time_array_search[n_s] = round(time_array_search[n_s - 1] + ((end_s - start_s) * 1000), 4)
+            n_s = n_s + 1
 
     def delete(T, value):
         i = 0
+        start_d = time.perf_counter()
+        time_array_delete = [0.0] * T.default_size
+        n_d = 0
         while i < HashTable.default_size:
             k = int(HashFunction(value, i))
             if HashTable.table[k] == HashTable.empty_cell or HashTable.table[k] == HashTable.deleted_cell:
-                return
-            if HashTable.table[k] == value:
+                end_d = time.perf_counter()
+                time_array_delete[n_d] = round(time_array_delete[n_d - 1] + ((end_d - start_d) * 1000), 4)
+                print("ERROR: value not found")
+                return time_array_delete
+            elif HashTable.table[k] == value:
                 HashTable.table[k] = HashTable.deleted_cell
-                return
+                end_d = time.perf_counter()
+                time_array_delete[n_d] = round(time_array_delete[n_d - 1] + ((end_d - start_d) * 1000), 4)
+                return time_array_delete
             i = i + 1
+            end_d = time.perf_counter()
+            time_array_delete[n_d] = round(time_array_delete[n_d - 1] + ((end_d - start_d) * 1000), 4)
+            n_d = n_d + 1
+        print("ERROR: value not found")
+        return time_array_delete
 
 
 T = HashTable()
 elements = arr.array('i', elements)
 
 start = time.perf_counter()
+n = 0
+time_array_insert = [0.0] * T.default_size
 for element in elements:
     HashTable.insert(T, element)
-end = time.perf_counter()
+    end = time.perf_counter()
+    time_array_insert[n] = round(time_array_insert[n - 1] + ((end - start) * 1000), 4)
+    n = n + 1
 
 print('\n', 'Hash Table: ', T.table)
-print('Time in seconds to insert elements into the Hash Table: '"%10.10f" % (end - start), '\n')
+print('\n', 'Insert Time: ', time_array_insert)
 
 searched = int(input("Insert the value you are looking for in the hash table: "))
-start = time.perf_counter()
-a = HashTable.search(T, searched)
-end = time.perf_counter()
-print('Index of the searched element: ', a)
-print('Time in seconds to look for the element into the Hash Table: '"%10.10f" % (end - start), '\n')
+time_search = HashTable.search(T, searched)
+print('Search Time: ', time_search)
 
 deleted = int(input("Insert the value you want to delete in the hash table: "))
-start = time.perf_counter()
-HashTable.delete(T, deleted)
-end = time.perf_counter()
+time_delete = HashTable.delete(T, deleted)
 print('Hash Table with deleted element: ', T.table)
-print('Time in seconds to delete the element into the Hash Table: '"%10.10f" % (end - start))
+print('Delete Time: ', time_delete)
+
+number_of_elements_arr = [0.0] * T.default_size
+x = 0
+while x < T.default_size:
+    number_of_elements_arr[x] = number_of_elements_arr[x - 1] + 1
+    x = x + 1
+
+plt.title("Inserimento")
+plt.xlabel("numero di elementi da ordinare")
+#plt.xticks(number_of_elements_arr, number_of_elements_arr)
+plt.ylabel("tempo in millisecondi")
+#plt.yticks(time_array_insert, time_array_insert)
+plt.plot(number_of_elements_arr, time_array_insert)
+plt.show()
+
+plt.title("Ricerca")
+plt.xlabel("numero di elementi da ordinare")
+#plt.xticks(number_of_elements_arr, number_of_elements_arr)
+plt.ylabel("tempo in millisecondi")
+#plt.yticks(time_search, time_search)
+plt.plot(number_of_elements_arr, time_search)
+plt.show()
+
+plt.title("Cancellazione")
+plt.xlabel("numero di elementi da ordinare")
+#plt.xticks(number_of_elements_arr, number_of_elements_arr)
+plt.ylabel("tempo in millisecondi")
+#plt.yticks(time_delete, time_delete)
+plt.plot(number_of_elements_arr, time_delete)
+plt.show()
